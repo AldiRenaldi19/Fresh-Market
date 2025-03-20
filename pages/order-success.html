@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pesanan Berhasil - Fresh Market</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="success-container">
+      <div class="success-content">
+        <i class="fas fa-check-circle"></i>
+        <h1>Pesanan Berhasil!</h1>
+        <p>Terima kasih telah berbelanja di Fresh Market.</p>
+        <p>Nomor pesanan Anda: <strong>#ORD-${Date.now()}</strong></p>
+        <p>Kami akan segera memproses pesanan Anda.</p>
+        <div class="success-buttons">
+          <a href="index.html" class="home-button">Kembali ke Beranda</a>
+          <a href="products.html" class="shop-button">Belanja Lagi</a>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .success-container {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: #f8f9fa;
+      }
+
+      .success-content {
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .success-content i {
+        font-size: 64px;
+        color: #2e7d32;
+        margin-bottom: 20px;
+      }
+
+      .success-buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .home-button,
+      .shop-button {
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+
+      .home-button {
+        background: #2e7d32;
+        color: white;
+      }
+
+      .shop-button {
+        border: 1px solid #2e7d32;
+        color: #2e7d32;
+      }
+    </style>
+  </body>
+</html>
