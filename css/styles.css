@@ -569,3 +569,25 @@ form input {
 .home-btn:hover {
   background: #1b5e20;
 }
+
+/* Menambahkan atau memodifikasi CSS untuk logo */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-container img {
+  /* Ukuran logo yang lebih kecil */
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* Memperbaiki alignment logo dengan teks */
+.logo {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: #2e7d32;
+  text-decoration: none;
+}
