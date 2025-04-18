@@ -49,50 +49,38 @@
         const categoryFilter = document.getElementById("categoryFilter");
 
         // Fungsi untuk memuat dan menampilkan produk
-        function loadProducts() {
-          const products = JSON.parse(localStorage.getItem("products")) || [];
-          const searchTerm = searchInput.value.toLowerCase();
-          const selectedCategory = categoryFilter.value;
+        async function loadProducts() {
+          showLoading();
 
-          // Filter produk berdasarkan pencarian dan kategori
-          const filteredProducts = products.filter((product) => {
-            const matchSearch = product.name.toLowerCase().includes(searchTerm);
-            const matchCategory =
-              !selectedCategory || product.category === selectedCategory;
-            return matchSearch && matchCategory;
-          });
+          try {
+            // Implementasi caching
+            const cachedProducts = await getCachedProducts();
+            if (cachedProducts) {
+              displayProducts(cachedProducts);
+              return;
+            }
 
-          // Tampilkan produk
-          productsContainer.innerHTML = filteredProducts
-            .map(
-              (product) => `
-                <div class="product-card">
-                    <img src="${
-                      product.image || "../../assets/images/default-product.png"
-                    }" 
-                         alt="${product.name}"
-                         onerror="this.src='../../assets/images/default-product.png'">
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <p class="price">Rp ${product.price.toLocaleString()}</p>
-                        <p class="stock">Stok: ${product.stock}</p>
-                        <div class="product-actions">
-                            <button onclick="addToCart('${
-                              product.id
-                            }')" class="add-to-cart-btn">
-                                <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
-                            </button>
-                            <button onclick="addToWishlist('${
-                              product.id
-                            }')" class="wishlist-btn">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `
-            )
-            .join("");
+            const products = JSON.parse(localStorage.getItem("products")) || [];
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+
+            const filteredProducts = products.filter((product) => {
+              const matchSearch = product.name
+                .toLowerCase()
+                .includes(searchTerm);
+              const matchCategory =
+                !selectedCategory || product.category === selectedCategory;
+              return matchSearch && matchCategory && product.stock > 0; // Tambah filter stok
+            });
+
+            // Simpan ke cache
+            cacheProducts(filteredProducts);
+            displayProducts(filteredProducts);
+          } catch (error) {
+            showError("Gagal memuat produk");
+          } finally {
+            hideLoading();
+          }
         }
 
         // Fungsi untuk menambah ke keranjang

@@ -30,27 +30,39 @@ class Cart {
   }
 
   // Tambah item ke keranjang
-  addItem(userId, product, quantity = 1) {
-    const existingItem = this.items.find(
-      (item) => item.userId === userId && item.id === product.id
-    );
+  async addItem(userId, product, quantity = 1) {
+    try {
+      // Cek stok dulu
+      const currentStock = await this.checkProductStock(product.id);
+      if (currentStock < quantity) {
+        throw new Error("Stok tidak mencukupi");
+      }
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      this.items.push({
-        userId: userId,
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity: quantity,
-        addedAt: new Date().toISOString(),
-      });
+      const existingItem = this.items.find(
+        (item) => item.userId === userId && item.id === product.id
+      );
+
+      if (existingItem) {
+        if (existingItem.quantity + quantity > currentStock) {
+          throw new Error("Jumlah melebihi stok tersedia");
+        }
+        existingItem.quantity += quantity;
+      } else {
+        this.items.push({
+          userId,
+          ...product,
+          quantity,
+          addedAt: new Date().toISOString(),
+        });
+      }
+
+      this.saveCart();
+      showSuccess("Produk berhasil ditambahkan");
+      return true;
+    } catch (error) {
+      showError(error.message);
+      return false;
     }
-
-    this.saveCart();
-    return true;
   }
 
   // Hapus item dari keranjang

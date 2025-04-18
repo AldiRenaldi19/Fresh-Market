@@ -328,13 +328,20 @@
         loginForm.addEventListener("submit", async function (e) {
           e.preventDefault();
 
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
+          if (!validateLoginForm()) return;
 
-          loginBtn.disabled = true;
-          loginBtn.classList.add("loading");
+          showLoading();
 
           try {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const sessionData = {
+              expiresAt: new Date().getTime() + 24 * 60 * 60 * 1000,
+            };
+
+            const hashedPassword = await hashPassword(password);
+
             const registeredUsers =
               JSON.parse(localStorage.getItem("registeredUsers")) || [];
 
@@ -361,7 +368,17 @@
             }
 
             // Cek kredensial user biasa
-            if (user && user.password === password) {
+            if (
+              user &&
+              (await comparePassword(hashedPassword, user.password))
+            ) {
+              localStorage.setItem(
+                "userSession",
+                JSON.stringify({
+                  ...user,
+                  ...sessionData,
+                })
+              );
               localStorage.setItem(
                 "user",
                 JSON.stringify({
@@ -377,11 +394,9 @@
               alert("Email atau kata sandi salah!");
             }
           } catch (error) {
-            console.error("Login error:", error);
-            alert("Terjadi kesalahan saat login");
+            showError("Login gagal: " + error.message);
           } finally {
-            loginBtn.disabled = false;
-            loginBtn.classList.remove("loading");
+            hideLoading();
           }
         });
       });

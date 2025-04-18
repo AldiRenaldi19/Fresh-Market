@@ -24,23 +24,19 @@ function checkAdminAuth() {
 
 // Fungsi untuk mengecek sesi login
 function checkSession() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) return false;
+  const session = JSON.parse(localStorage.getItem("userSession"));
 
-  // Cek waktu login terakhir (24 jam)
-  const lastLogin = new Date(user.lastLogin);
-  const now = new Date();
-  const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
-
-  // Jika lebih dari 24 jam, logout otomatis
-  if (hoursDiff > 24) {
+  if (!session) {
     logout();
     return false;
   }
 
-  // Update waktu login terakhir
-  user.lastLogin = now.toISOString();
-  localStorage.setItem("user", JSON.stringify(user));
+  if (new Date().getTime() > session.expiresAt) {
+    logout();
+    notificationSystem.show("Sesi Anda telah berakhir. Silakan login kembali");
+    return false;
+  }
+
   return true;
 }
 
@@ -102,7 +98,7 @@ function loadUserNavbar() {
                 <button class="mobile-menu-btn" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
-                <a href="/pages/index.html" class="home-btn">
+                <a href="/pages/home.html" class="home-btn">
                     <i class="fas fa-home"></i> <span>Beranda Utama</span>
                 </a>
             </div>
@@ -213,3 +209,12 @@ window.addEventListener("resize", function () {
 function goToHomePage() {
   window.location.href = "/pages/index.html";
 }
+
+// Tambahkan ke setiap halaman yang membutuhkan auth
+document.addEventListener("DOMContentLoaded", function () {
+  if (!checkSession()) {
+    window.location.href = "/login.html";
+    return;
+  }
+  // lanjutkan load halaman
+});
